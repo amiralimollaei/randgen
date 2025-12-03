@@ -1,0 +1,18 @@
+[project]
+name = "randgen"
+version = "1.0.0"
+description = "Random Equation Generator"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "argparse>=1.4.0",
+]
+
+[tool.uv]
+package = true
+
+[project.scripts]
+randgen = "randgen:main"
+
+[tool.setuptools]
+py-modules = ['randgen']
