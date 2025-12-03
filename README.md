@@ -18,8 +18,16 @@ uv run randgen --target <number>
 
 below is the result of `randgen --help`
 
-```
+```text
 usage: randgen [-h] --target TARGET [--num-iterations NUM_ITERATIONS] [--seed SEED]
+
+Random Equation Generator
+
+options:
+  -h, --help            show this help message and exit
+  --target TARGET, -t TARGET
+  --num-iterations NUM_ITERATIONS, -n NUM_ITERATIONS
+  --seed SEED, -s SEED
 ```
 
 ## License
