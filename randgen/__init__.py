@@ -1,4 +1,5 @@
 import dataclasses
+import math
 import random
 import sys
 
@@ -24,108 +25,178 @@ def get_expression(value: 'MathematicalExpression | float') -> str:
     return value.expression if isinstance(value, MathematicalExpression) else format_value(value, int_mode)
 
 
-def eval_plus_fn(value1, value2): return get_value(value1) + get_value(value2)
-def eval_minus_fn(value1, value2): return get_value(value1) - get_value(value2)
-def eval_mul_fn(value1, value2): return get_value(value1) * get_value(value2)
-def eval_div_fn(value1, value2): return get_value(value1) / get_value(value2)
-def eval_and_fn(value1, value2): return float(round(get_value(value1)) & round(get_value(value2)))
-def eval_or_fn(value1, value2): return float(round(get_value(value1)) | round(get_value(value2)))
-def eval_xor_fn(value1, value2): return float(round(get_value(value1)) ^ round(get_value(value2)))
-def eval_shr_fn(value1, value2): return float(round(get_value(value1)) >> round(get_value(value2)))
-def eval_shl_fn(value1, value2): return float(round(get_value(value1)) << round(get_value(value2)))
+# mathematical operations
+
+def eval_plus_op(value1, value2): return get_value(value1) + get_value(value2)
+def eval_minus_op(value1, value2): return get_value(value1) - get_value(value2)
+def eval_mul_op(value1, value2): return get_value(value1) * get_value(value2)
+def eval_div_op(value1, value2): return get_value(value1) / get_value(value2)
+def eval_and_op(value1, value2): return float(round(get_value(value1)) & round(get_value(value2)))
+def eval_or_op(value1, value2): return float(round(get_value(value1)) | round(get_value(value2)))
+def eval_xor_op(value1, value2): return float(round(get_value(value1)) ^ round(get_value(value2)))
+def eval_shr_op(value1, value2): return float(round(get_value(value1)) >> round(get_value(value2)))
+def eval_shl_op(value1, value2): return float(round(get_value(value1)) << round(get_value(value2)))
 
 
-def exp_plus_fn(value1, value2): return f"({get_expression(value1)}+{get_expression(value2)})"
-def exp_minus_fn(value1, value2): return f"({get_expression(value1)}-{get_expression(value2)})"
-def exp_mul_fn(value1, value2): return f"({get_expression(value1)}*{get_expression(value2)})"
-def exp_div_fn(value1, value2): return f"({get_expression(value1)}/{get_expression(value2)})"
-def exp_or_fn(value1, value2): return f"({get_expression(value1)}|{get_expression(value2)})"
-def exp_and_fn(value1, value2): return f"({get_expression(value1)}&{get_expression(value2)})"
-def exp_xor_fn(value1, value2): return f"({get_expression(value1)}⊻{get_expression(value2)})"
-def exp_shr_fn(value1, value2): return f"({get_expression(value1)}>>{get_expression(value2)})"
-def exp_shl_fn(value1, value2): return f"({get_expression(value1)}<<{get_expression(value2)})"
+def exp_plus_op(value1, value2): return f"({get_expression(value1)}+{get_expression(value2)})"
+def exp_minus_op(value1, value2): return f"({get_expression(value1)}-{get_expression(value2)})"
+def exp_mul_op(value1, value2): return f"({get_expression(value1)}*{get_expression(value2)})"
+def exp_div_op(value1, value2): return f"({get_expression(value1)}/{get_expression(value2)})"
+def exp_or_op(value1, value2): return f"({get_expression(value1)}|{get_expression(value2)})"
+def exp_and_op(value1, value2): return f"({get_expression(value1)}&{get_expression(value2)})"
+def exp_xor_op(value1, value2): return f"({get_expression(value1)}⊻{get_expression(value2)})"
+def exp_shr_op(value1, value2): return f"({get_expression(value1)}>>{get_expression(value2)})"
+def exp_shl_op(value1, value2): return f"({get_expression(value1)}<<{get_expression(value2)})"
+
+
+MATH_OPERANDS = {
+    # name: (eval fn, exp fn, int mode, unwanted values, positive only)
+    "plus": (eval_plus_op, exp_plus_op, False, [0.0], False),
+    "minus": (eval_minus_op, exp_minus_op, False, [0.0], False),
+    "mul": (eval_mul_op, exp_mul_op, False, [0.0], False),
+    "div": (eval_div_op, exp_div_op, False, [0.0], False),
+    "or": (eval_or_op, exp_or_op, True, [], False),
+    "and": (eval_and_op, exp_and_op, True, [], False),
+    "xor": (eval_xor_op, exp_xor_op, True, [], False),
+    # TODO: Fix overflow error
+    # "shr": (eval_shr_op, exp_shr_op, True, [0.0], True),
+    # "shl": (eval_shl_op, exp_shl_op, True, [0.0], True),
+}
+
+
+# mathematical functions
+
+def eval_sin_fn(value): return math.sin(get_value(value))
+def eval_cos_fn(value): return math.cos(get_value(value))
+def eval_tan_fn(value): return math.tan(get_value(value))
+def eval_cot_fn(value): return 1/math.tan(get_value(value))
+def eval_sec_fn(value): return 1/math.cos(get_value(value))
+def eval_csc_fn(value): return 1/math.sin(get_value(value))
+def eval_sqrt_fn(value): return math.sqrt(get_value(value))
+def eval_log_fn(value): return math.log(get_value(value))
+def eval_exp_fn(value): return math.exp(get_value(value))
+
+
+def exp_sin_fn(value): return f"sin({get_value(value)})"
+def exp_cos_fn(value): return f"cos({get_value(value)})"
+def exp_tan_fn(value): return f"tan({get_value(value)})"
+def exp_cot_fn(value): return f"cot({get_value(value)})"
+def exp_sec_fn(value): return f"sec({get_value(value)})"
+def exp_csc_fn(value): return f"csc({get_value(value)})"
+def exp_sqrt_fn(value): return f"sqrt({get_value(value)})"
+def exp_log_fn(value): return f"log({get_value(value)})"
+def exp_exp_fn(value): return f"exp({get_value(value)})"
 
 
 MATH_FUNCTIONS = {
-    # name: (eval fn, exp fn, int mode, unwanted values, positive only)
-    "plus": (eval_plus_fn, exp_plus_fn, False, [0.0], False),
-    "minus": (eval_minus_fn, exp_minus_fn, False, [0.0], False),
-    "mul": (eval_mul_fn, exp_mul_fn, False, [0.0], False),
-    "div": (eval_div_fn, exp_div_fn, False, [0.0], False),
-    "or": (eval_or_fn, exp_or_fn, True, [], False),
-    "and": (eval_and_fn, exp_and_fn, True, [], False),
-    "xor": (eval_xor_fn, exp_xor_fn, True, [], False),
+    # name: (eval fn, exp fn, unwanted values, positive only)
+    None: (None, None, [], False),
+    "sin": (eval_sin_fn, exp_sin_fn, [0.0], False),
+    "cos": (eval_cos_fn, exp_cos_fn, [0.0], False),
+    "tan": (eval_tan_fn, exp_tan_fn, [0.0], False),
+    "cot": (eval_cot_fn, exp_cot_fn, [0.0], False),
+    "sec": (eval_sec_fn, exp_sec_fn, [], False),
+    "csc": (eval_csc_fn, exp_csc_fn, [], False),
+    "sqrt": (eval_sqrt_fn, exp_sqrt_fn, [], True),
     # TODO: Fix overflow error
-    # "shr": (eval_shr_fn, exp_shr_fn, True, [0.0], True),
-    # "shl": (eval_shl_fn, exp_shl_fn, True, [0.0], True),
+    # "log": (eval_log_fn, exp_log_fn, [0.0], True),
+    # "exp": (eval_exp_fn, exp_exp_fn, [0.0], False),
 }
 
 
 @dataclasses.dataclass(frozen=True)
 class MathematicalExpression:
+    """
+    Represent a mathematical expression
+
+    - if `value2` is not defined, it is a mathematical value, and `function` MAY be defined for it
+    - if `value2` is defined it is a mathematical equation, and `operand` MUST be defined for it
+    """
+
     value1: 'MathematicalExpression | float'
     value2: 'MathematicalExpression | float | None' = None
     operand: str | None = None
+    function: str | None = None
+
+    @property
+    def eval_op(self):
+        return MATH_OPERANDS[self.operand][0] if self.operand else False
+
+    @property
+    def exp_op(self):
+        return MATH_OPERANDS[self.operand][1] if self.operand else False
 
     @property
     def eval_fn(self):
-        return MATH_FUNCTIONS[self.operand][0] if self.operand else False
+        return MATH_FUNCTIONS[self.function][0] if self.function else False
 
     @property
     def exp_fn(self):
-        return MATH_FUNCTIONS[self.operand][1] if self.operand else False
+        return MATH_FUNCTIONS[self.function][1] if self.function else False
 
     @property
     def int_mode(self):
-        return MATH_FUNCTIONS[self.operand][2] if self.operand else False
+        return MATH_OPERANDS[self.operand][2] if self.operand else False
 
     @property
     def eval(self) -> float:
-        """the numerical result of evaluating the Mathematical Value as a float"""
-        if self.value2 is not None:
-            assert self.eval_fn
-            return self.eval_fn(self.value1, self.value2)
-        return self.value1.eval if isinstance(self.value1, MathematicalExpression) else (int(self.value1) if (self.int_mode) else self.value1)
+        """the numerical result of evaluating the mathematical expression as a float"""
+        if self.value2 is None:
+            return self.eval_fn(self.value1) if self.eval_fn else get_value(self.value1)
+        else:
+            assert self.eval_op
+            return self.eval_op(self.value1, self.value2)
 
     @property
     def expression(self) -> str:
         """the full mathematical expression as a string"""
-        if self.value2 is not None:
-            assert self.exp_fn
-            return self.exp_fn(self.value1, self.value2)
-        int_mode = self.value1.int_mode if isinstance(self.value1, MathematicalExpression) else False
-        return self.value1.expression if isinstance(self.value1, MathematicalExpression) else format_value(self.value1, int_mode)
+        if self.value2 is None:
+            return self.exp_fn(self.value1) if self.exp_fn else get_expression(self.value1)
+        else:
+            assert self.exp_op
+            return self.exp_op(self.value1, self.value2)
 
+def generate_random_value(mu: float, sigma: float) -> MathematicalExpression:
+    rand_function, (_, _, unwanted_values, positive_only) = random.choice(list(
+        MATH_FUNCTIONS.items()
+    ))
+    unwanted_values = set(unwanted_values)
+    rand_num = None
+    while rand_num is None or rand_num in unwanted_values:
+        rand_num = generate_random_float(mu, sigma)
+        if positive_only and rand_num < 0:
+            rand_num = -rand_num
+    
+    return MathematicalExpression(
+        value1=rand_num,
+        function=rand_function,
+    )
 
-def generate_random_expresson(length: int) -> MathematicalExpression:
+def generate_random_equation(length: int) -> MathematicalExpression:
     value = MathematicalExpression(
         value1=generate_random_float(0, 1/length)
     )
     for _ in range(length):
         rand_operand, (_, _, _, unwanted_values, positive_only) = random.choice(list(
-            MATH_FUNCTIONS.items()
+            MATH_OPERANDS.items()
         ))
         unwanted_values = set(unwanted_values)
         if positive_only and value.eval < 0 or value.eval in unwanted_values:
             continue
-        rand_num = None
-        while rand_num is None or rand_num in unwanted_values:
-            rand_num = int(generate_random_float(0, 1/length))
-            if positive_only and rand_num < 0:
-                rand_num = -rand_num
+        rand_value = generate_random_value(0, 1/length)
         reverse_order = random.randint(0, 1)
         if reverse_order:
-            value, rand_num = rand_num, value
+            value, rand_value = rand_value, value
         value = MathematicalExpression(
             value1=value,
-            value2=rand_num,
+            value2=rand_value,
             operand=rand_operand,
         )
     return value
 
 
 def generate_expresson(target: int, n_iters: int) -> MathematicalExpression:
-    sys.setrecursionlimit((n_iters + 100) * 3)  # TODO: fix this
+    sys.setrecursionlimit((n_iters + 100) * 3)  # TODO: how can we make it less recursive so that we don't hit the recursion limit?
 
     value = MathematicalExpression(
         value1=generate_random_float(0, 1/n_iters)
@@ -137,7 +208,7 @@ def generate_expresson(target: int, n_iters: int) -> MathematicalExpression:
             sub_expression_target_value = generate_random_float(0, 1/n_iters)
         if sub_expression_target_value == 0:
             continue
-        rand_exp = generate_random_expresson(length=random.randint(2, 6))
+        rand_exp = generate_random_equation(length=random.randint(2, 6))
         if round(rand_exp.eval, RANDOM_FLOAT_DECIMALS) == 0:
             continue
         sub_value_value1 = sub_expression_target_value
@@ -178,7 +249,7 @@ def main():
     argparser.add_argument(
         "--num-iterations", "-n",
         type=int,
-        default=25,
+        default=20,
     )
     argparser.add_argument(
         "--seed", "-s",
